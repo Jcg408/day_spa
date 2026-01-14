@@ -1,0 +1,56 @@
+<div class="w-full">
+  <% if logged_in? %>
+    <div class="max-w-4xl mx-auto">
+      <div class="bg-white shadow overflow-hidden sm:rounded-lg mb-6">
+        <div class="px-4 py-5 sm:px-6">
+          <h3 class="text-lg leading-6 font-medium text-gray-900">
+            <%= current_business.name %>
+          </h3>
+          <p class="mt-1 max-w-2xl text-sm text-gray-500">
+            Hello, <%= current_employee.name %>! &middot; <span class="font-semibold"><%= current_employee.role.titleize %></span>
+          </p>
+        </div>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <%= link_to employees_path, class: "block p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100" do %>
+          <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">Employees</h5>
+          <p class="font-normal text-gray-700">Manage salon staff</p>
+        <% end %>
+
+        <%= link_to clients_path, class: "block p-6 bg-white border border-gray-200 rounded-lg shadow hover:bg-gray-100" do %>
+          <h5 class="mb-2 text-2xl font-bold tracking-tight text-gray-900">Clients</h5>
+          <p class="font-normal text-gray-700">View and manage clients</p>
+        <% end %>
+      </div>
+
+      <% if current_employee.admin? %>
+        <div class="mt-6 bg-yellow-50 border-l-4 border-yellow-400 p-4">
+          <div class="flex">
+            <div class="ml-3">
+              <p class="text-sm text-yellow-700">
+                You have <strong>admin</strong> privileges and can access all features.
+              </p>
+            </div>
+          </div>
+        </div>
+      <% elsif current_employee.manager? %>
+        <div class="mt-6 bg-blue-50 border-l-4 border-blue-400 p-4">
+          <div class="flex">
+            <div class="ml-3">
+              <p class="text-sm text-blue-700">
+                You have <strong>manager</strong> privileges with elevated access.
+              </p>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <div class="text-center py-20">
+      <h1 class="text-4xl font-bold mb-4">Marvella Systems</h1>
+      <h2 class="text-gray-700 mb-8">Effective management of business resources</h2>
+    </div>
+  <% end %>
+</div>
+

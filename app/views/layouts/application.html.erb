@@ -1,10 +1,10 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <title><%= content_for(:title) || "Day Spa" %></title>
+    <title><%= content_for(:title) || "Marvella Business Manager" %></title>
     <meta name="viewport" content="width=device-width,initial-scale=1">
     <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="Day Spa">
+    <meta name="application-name" content="Marvella Business Manager">
     <meta name="mobile-web-app-capable" content="yes">
     <%= csrf_meta_tags %>
     <%= csp_meta_tag %>
@@ -24,7 +24,48 @@
   </head>
 
   <body>
-    <main class="container mx-auto mt-28 px-5 flex">
+    <nav class="bg-gray-800">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+          <div class="flex items-center">
+            <div class="shrink-0">
+              <% if logged_in? %>
+                <%= link_to current_business.name, root_path, class: "text-white font-bold text-xl hover:text-gray-200" %>
+              <% else %>
+                <span class="text-white font-bold text-xl">MBM</span>
+              <% end %>
+            </div>
+          </div>
+          <div class="flex items-center">
+            <% if logged_in? %>
+              <span class="text-gray-300 text-sm mr-4">
+                <%= current_employee.name %> 
+                <span class="text-xs text-gray-400">(<%= current_employee.role %>)</span>
+              </span>
+              <%= button_to "Logout", logout_path, method: :delete, 
+                  class: "bg-red-600 hover:bg-red-700 text-white px-3 py-2 rounded-md text-sm font-medium" %>
+            <% else %>
+              <%= link_to "Log In", login_path, 
+                  class: "bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium" %>
+            <% end %>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <% if flash[:notice] %>
+      <div class="bg-green-50 border-l-4 border-green-400 p-4 mb-4">
+        <p class="text-green-700"><%= flash[:notice] %></p>
+      </div>
+    <% end %>
+
+    <% if flash[:alert] %>
+      <div class="bg-red-50 border-l-4 border-red-400 p-4 mb-4">
+        <p class="text-red-700"><%= flash[:alert] %></p>
+      </div>
+    <% end %>
+
+    <main class="container mx-auto mt-8 px-5 flex">
       <%= yield %>
     </main>
   </body>

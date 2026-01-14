@@ -1,5 +1,13 @@
 Rails.application.routes.draw do
-  resources :businesses
+  # Root path
+  root "home#index"
+  
+  # Authentication routes
+  get "login", to: "sessions#new"
+  post "login", to: "sessions#create"
+  delete "logout", to: "sessions#destroy"
+  
+  resources :businesses, only: [:show, :update]
   resources :employees
   resources :clients
   # Define your application routes per the DSL in https://guides.rubyonrails.org/routing.html
