@@ -1,7 +1,10 @@
 class Employee < ApplicationRecord
+  has_many :phones, as: :phoneable, dependent: :destroy
+  has_many :locations, as: :locatable, dependent: :destroy
+  accepts_nested_attributes_for :phones, :locations
+
   belongs_to :business
 
-  # Authentication
   has_secure_password
   
   # Role-based access control
@@ -10,7 +13,6 @@ class Employee < ApplicationRecord
   validates :name, presence: true
   validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }
 
-  # Authorization helper methods
   def admin?
     role == "admin"
   end

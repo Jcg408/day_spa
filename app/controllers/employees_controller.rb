@@ -11,6 +11,8 @@ class EmployeesController < ApplicationController
 
   def new
     @employee = current_business.employees.build
+    @employee.phones.build
+    @employee.locations.build
   end
 
   def create
@@ -46,13 +48,14 @@ class EmployeesController < ApplicationController
   end
 
   def employee_params
-    # Regular employees can only update their own basic info
-    if current_employee.admin?
-      params.require(:employee).permit(:name, :email, :bio, :role, :password, :password_confirmation)
-    elsif current_employee.manager?
-      params.require(:employee).permit(:name, :email, :bio, :password, :password_confirmation)
-    else
-      params.require(:employee).permit(:name, :bio, :password, :password_confirmation)
-    end
+    base_attributes = [
+      :name, :email, :bio, :password, :password_confirmation,
+      phones_attributes: [:id, :number, :phone_type, :extension, :_destroy],
+      locations_attributes: [:id, :street, :street2, :city, :state, :postal_code, :country, :location_type, :_destroy]
+    ]
+    
+    base_attributes << :role if current_employee.admin?
+    
+    params.require(:employee).permit(base_attributes)
   end
 end

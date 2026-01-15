@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_14_173629) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_15_181820) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
@@ -41,6 +41,32 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_14_173629) do
     t.index ["business_id"], name: "index_employees_on_business_id"
     t.index ["email"], name: "index_employees_on_email", unique: true
     t.index ["role"], name: "index_employees_on_role"
+  end
+
+  create_table "locations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.string "city"
+    t.string "country"
+    t.datetime "created_at", null: false
+    t.bigint "locatable_id", null: false
+    t.string "locatable_type", null: false
+    t.integer "location_type", default: 0
+    t.string "postal_code"
+    t.string "state"
+    t.string "street"
+    t.string "street2"
+    t.datetime "updated_at", null: false
+    t.index ["locatable_type", "locatable_id"], name: "index_locations_on_locatable"
+  end
+
+  create_table "phones", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.string "extension"
+    t.string "number", null: false
+    t.integer "phone_type", default: 0
+    t.bigint "phoneable_id", null: false
+    t.string "phoneable_type", null: false
+    t.datetime "updated_at", null: false
+    t.index ["phoneable_type", "phoneable_id"], name: "index_phones_on_phoneable"
   end
 
   create_table "products", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|

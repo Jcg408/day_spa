@@ -1,4 +1,51 @@
 <div>
-  <h1 class="font-bold text-4xl">Add Employee </h1>
-  <p>Find me in app/views/employees/new.html.erb</p>
+  <h1 class="font-bold text-3xl">Add Employee </h1>
+  <div class="mt-10 text-2xl">
+  <%= form_with model: @employee do |form| %>
+  <div>
+    <%= form.label :name %>
+    <%= form.text_field :name %>
+  </div>
+  <div>
+    <%= form.label :email %>
+    <%= form.text_field :email %>
+  </div>
+
+  <!-- Now add nested phone fields -->
+  <%= form.fields_for :phones do |phone_form| %>
+    <div>
+      <%= phone_form.label :number %>
+      <%= phone_form.text_field :number %>
+    </div>
+    <div>
+      <%= phone_form.label :phone_type %>
+      <%= phone_form.select :phone_type, Phone.phone_types.keys %>
+    </div>
+  <% end %>
+  <%= form.fields_for :locations do |location_form| %>
+    <div>
+      <%= location_form.label :street %>
+      <%= location_form.text_field :street %>
+    </div>
+    <div>
+      <%= location_form.label :city %>
+      <%= location_form.text_field :city %>
+    </div>
+    <div>
+      <%= location_form.label :state %>
+      <%= location_form.text_field :state %>
+    </div>
+    <div>
+      <%= location_form.label :postal_code %>
+      <%= location_form.text_field :postal_code %>
+    </div>
+    <div>
+      <%= location_form.label :location_type %>
+      <%= location_form.select :location_type, Location.location_types.keys %>
+    </div>
+  <% end %>
+
+  <%= form.submit %>
+<% end %>
+  </div>
 </div>
