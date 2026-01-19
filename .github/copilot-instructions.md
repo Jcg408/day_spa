@@ -1,14 +1,25 @@
-# Copilot Instructions for Hair Salon Rails App
+# Copilot Instructions for Beauty Business Management System
 
 ## Project Overview
-A Rails 8.1 luxury day spa management application using PostgreSQL, Hotwire (Turbo + Stimulus), with TailwindCss and modern asset pipeline (Propshaft). The codebase is in early stage with core models being scaffolded.
+A Rails 8.1 multi-tenant business management platform designed for the beauty industry (cosmetology, esthetics, spas, salons). Uses PostgreSQL, Hotwire (Turbo + Stimulus), TailwindCSS, and modern asset pipeline (Propshaft). Currently in active development with core models established and scheduling system as next priority.
 
 ## Architecture & Data Model
 
 ### Core Entities
-- **Employee**: Salon staff with `name` and `bio` fields
-- **Service**: Salon services with STI (`type` field) - uses single table inheritance for service types
-  - Accepts nested attributes for related `staffs` and `appointments`
+- **Business**: Multi-tenant root entity - each business has independent configuration
+- **Employee**: Staff members with profiles, roles, and service capabilities
+- **Client**: Customer profiles with appointment history and preferences
+- **Service**: Configurable services (haircuts, coloring, facials, waxing, etc.) that businesses can customize
+- **Location**: Physical business locations (supports multi-location businesses)
+- **Product**: Inventory items and supplies
+- **Supplier**: Vendor management for product sourcing
+- **Phone**: Contact information (polymorphic association)
+
+### Multi-Tenant Architecture
+- Each Business operates independently with its own data and configuration
+- Business admins can configure which services they offer
+- Role-based access control for staff permissions
+- Customizable service catalog per business
 
 ### Database
 - PostgreSQL backend (see [config/database.yml](config/database.yml))
@@ -17,8 +28,9 @@ A Rails 8.1 luxury day spa management application using PostgreSQL, Hotwire (Tur
 
 ### Key Models Pattern
 - Models live in [app/models/](app/models/) extending `ApplicationRecord`
-- Fixtures defined in [test/fixtures/](test/fixtures/) (e.g., employees.yml, services.yml)
-- Relationships not yet fully implemented - Service model references `staffs` and `appointments` but associations aren't defined yet
+- Using FactoryBot for test data (spec/factories/)
+- Associations being built out as features are implemented
+- Focus on proper validation and business logic in models
 
 ## Frontend Stack
 - **Hotwire**: Turbo Rails for SPA-like behavior, Stimulus for lightweight JS
@@ -63,16 +75,38 @@ bin/bundler-audit # Check gem vulnerabilities
 - Views in [app/views/](app/views/) organized by controller name
 
 ### Routes
-- [config/routes.rb](config/routes.rb) currently minimal (just health check `/up`)
-- RESTful convention expected for new resources (resources :employees, :services)
-- No API namespace yet - structure as needed for future mobile app
+- [config/routes.rb](config/routes.rb) has basic resources for employees, clients, services, businesses
+- RESTful conventions followed for all resources
+- Session management for authentication
+- Future: API namespace for mobile app integration
 
-## Critical Areas Needing Development
-1. **Routes**: Add RESTful routes for Employee and Service resources
-2. **Associations**: Complete Service ↔ Staff and Appointment relationships
-3. **Controllers**: Add CRUD actions for employees/services
-4. **Validations**: Strengthen model validations beyond name presence
-5. **Views**: Scaffold ERB templates with Hotwire patterns
+## Development Priorities
+
+### Phase 1: Foundation (In Progress)
+- ✅ Core models established (Business, Employee, Client, Service, Product, Supplier)
+- ✅ Basic controllers and views scaffolded
+- 🔄 Authentication and session management
+- 🔄 Role-based access control system
+- 🔄 Model associations and validations
+
+### Phase 2: Scheduling System (Next Priority)
+- 📋 **Calendar Integration**: Evaluate and integrate calendar gem (Simple Calendar, FullCalendar, or ice_cube)
+- 📋 **Appointment Model**: Create appointment booking system
+- 📋 **Staff Availability**: Manage when staff can take appointments
+- 📋 **Role-Based Booking**: Staff can book appointments based on permissions set by business admin
+- 📋 **Conflict Detection**: Prevent double-booking and scheduling conflicts
+
+### Phase 3: Business Configuration
+- 📋 Service catalog customization per business
+- 📋 Role and permission configuration interface
+- 📋 Business settings and preferences
+- 📋 Multi-location support
+
+### Phase 4: Advanced Features
+- 📋 Client self-service portal
+- 📋 Online booking system
+- 📋 Reporting and analytics
+- 📋 Payment processing
 
 ## Deployment & Environment
 - **Docker Support**: Dockerfile included; Kamal gem configured for deployment
@@ -82,7 +116,28 @@ bin/bundler-audit # Check gem vulnerabilities
 
 ## When Adding Features
 1. Always add migrations for schema changes (rails generate migration)
-2. Write fixtures in YAML for model tests
-3. Use Stimulus for JS interactions, not inline scripts
-4. Keep views DRY with partials in [app/views/layouts/](app/views/layouts/)
-5. Run `bin/rails db:schema:load` after migrations to verify schema integrity
+2. Use FactoryBot for test data (not fixtures)
+3. Write RSpec tests before or alongside implementation
+4. Use Stimulus for JS interactions, not inline scripts
+5. Keep views DRY with partials and Hotwire Turbo Frames
+6. Consider multi-tenant data isolation (scope queries by Business)
+7. Implement role-based authorization checks in controllers
+8. Run `bin/rails db:schema:load` after migrations to verify schema integrity
+
+## Key Business Logic Patterns
+
+### Multi-Tenancy
+- Always scope data by Business unless explicitly working with cross-business features
+- Use `current_business` helper in controllers to access active business context
+- Ensure associations properly link to Business for data isolation
+
+### Role-Based Access Control
+- Business admins can configure roles and permissions
+- Staff permissions determine what actions they can perform
+- Consider permissions when building scheduling features (who can book what)
+
+### Scheduling Considerations
+- Staff availability should be configurable (working hours, days off)
+- Services have durations that affect scheduling
+- Need conflict detection for double-booking prevention
+- Consider buffer time between appointments
