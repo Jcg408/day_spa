@@ -1,0 +1,15 @@
+<div class="max-w-4xl mx-auto px-4 py-8">
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-gray-900">Edit Business Settings</h1>
+    <p class="mt-2 text-gray-600">Update <%= @business.name %>'s information</p>
+  </div>
+
+  <%= form_with model: @business, class: "space-y-8" do |f| %>
+    <%= render "form", f: f %>
+
+    <div class="flex items-center justify-between pt-6 border-t">
+      <%= link_to "Cancel", business_path(@business), class: "px-4 py-2 text-gray-700 hover:text-gray-900" %>
+      <%= f.submit "Update Business", class: "px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 focus:ring-4 focus:ring-blue-300" %>
+    </div>
+  <% end %>
+</div>

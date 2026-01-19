@@ -10,16 +10,32 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.1].define(version: 2026_01_15_181820) do
+ActiveRecord::Schema[8.1].define(version: 2026_01_19_192727) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
   enable_extension "pgcrypto"
+
+  create_table "business_employees", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.boolean "active", default: true, null: false
+    t.uuid "business_id", null: false
+    t.datetime "created_at", null: false
+    t.uuid "employee_id", null: false
+    t.boolean "primary_location", default: false, null: false
+    t.integer "role", default: 0, null: false
+    t.datetime "updated_at", null: false
+    t.index ["business_id", "employee_id"], name: "index_business_employees_on_business_id_and_employee_id", unique: true
+    t.index ["business_id"], name: "index_business_employees_on_business_id"
+    t.index ["employee_id", "primary_location"], name: "index_business_employees_on_employee_primary", where: "(primary_location = true)"
+    t.index ["employee_id"], name: "index_business_employees_on_employee_id"
+  end
 
   create_table "businesses", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
     t.boolean "active"
     t.datetime "created_at", null: false
     t.string "name"
+    t.uuid "organization_id"
     t.datetime "updated_at", null: false
+    t.index ["organization_id"], name: "index_businesses_on_organization_id"
   end
 
   create_table "clients", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -56,6 +72,17 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_15_181820) do
     t.string "street2"
     t.datetime "updated_at", null: false
     t.index ["locatable_type", "locatable_id"], name: "index_locations_on_locatable"
+  end
+
+  create_table "organizations", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
+    t.boolean "active", default: true, null: false
+    t.datetime "created_at", null: false
+    t.text "description"
+    t.string "name", null: false
+    t.uuid "owner_id", null: false
+    t.datetime "updated_at", null: false
+    t.index ["name"], name: "index_organizations_on_name"
+    t.index ["owner_id"], name: "index_organizations_on_owner_id"
   end
 
   create_table "phones", id: :uuid, default: -> { "gen_random_uuid()" }, force: :cascade do |t|
@@ -96,6 +123,10 @@ ActiveRecord::Schema[8.1].define(version: 2026_01_15_181820) do
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "business_employees", "businesses"
+  add_foreign_key "business_employees", "employees"
+  add_foreign_key "businesses", "organizations"
   add_foreign_key "employees", "businesses"
+  add_foreign_key "organizations", "employees", column: "owner_id"
   add_foreign_key "products", "suppliers"
 end

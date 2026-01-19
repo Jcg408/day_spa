@@ -1,8 +1,19 @@
 class BusinessesController < ApplicationController
-  before_action :require_admin, only: [:edit, :update]
+  before_action :require_organization_owner, only: [:new, :create, :edit, :update, :destroy]
+  skip_before_action :set_current_business, only: [:new, :create, :index]
+
+  def index
+    @businesses = current_employee.organization.businesses
+  end
+
+  def new
+    @business = current_employee.organization.businesses.build
+    @business.phones.build
+    @business.locations.build
+  end
 
   def create
-    @business = Business.new(business_params)
+    @business = current_employee.organization.businesses.build(business_params)
 
     if @business.save
       redirect_to business_path(@business), notice: "Business created successfully"
@@ -28,6 +39,12 @@ class BusinessesController < ApplicationController
     else
       render :edit, status: :unprocessable_entity
     end
+  end
+
+  def destroy
+    @business = current_employee.organization.businesses.find(params[:id])
+    @business.destroy
+    redirect_to businesses_path, notice: "Business deleted successfully."
   end
 
   private

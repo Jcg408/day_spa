@@ -1,6 +1,8 @@
 class EmployeesController < ApplicationController
-  before_action :require_manager, only: [:new, :create, :edit, :update, :destroy]
+  before_action :require_resource_management, only: [:new, :create]
   before_action :set_employee, only: [:show, :edit, :update, :destroy]
+  before_action :authorize_employee_action, only: [:edit, :update]
+  before_action :require_destroy_permission, only: [:destroy]
 
   def index
     @employees = current_business.employees.order(:name)
@@ -10,15 +12,17 @@ class EmployeesController < ApplicationController
   end
 
   def new
-    @employee = current_business.employees.build
+    @employee = Employee.new
     @employee.phones.build
     @employee.locations.build
   end
 
   def create
-    @employee = current_business.employees.build(employee_params)
+    @employee = current_employee.organization.employees.build(employee_params)
     
     if @employee.save
+      # Assign to current business with staff role by default
+      @employee.business_employees.create!(business: current_business, role: :staff, primary_location: true)
       redirect_to employee_path(@employee), notice: "Employee created successfully."
     else
       render :new, status: :unprocessable_entity
@@ -45,6 +49,16 @@ class EmployeesController < ApplicationController
 
   def set_employee
     @employee = current_business.employees.find(params[:id])
+  end
+
+  def authorize_employee_action
+    authorize_self_or_admin(@employee)
+  end
+
+  def require_destroy_permission
+    unless can_destroy_records?
+      redirect_to employees_path, alert: "You don't have permission to delete employees."
+    end
   end
 
   def employee_params

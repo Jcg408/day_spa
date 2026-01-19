@@ -1,0 +1,226 @@
+<% if @business.errors.any? %>
+  <div class="bg-red-50 border-l-4 border-red-500 p-4 mb-6">
+    <div class="flex">
+      <div class="flex-shrink-0">
+        <svg class="h-5 w-5 text-red-400" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"></path>
+        </svg>
+      </div>
+      <div class="ml-3">
+        <h3 class="text-sm font-medium text-red-800">
+          <%= pluralize(@business.errors.count, "error") %> prohibited this business from being saved:
+        </h3>
+        <ul class="mt-2 text-sm text-red-700 list-disc list-inside">
+          <% @business.errors.full_messages.each do |message| %>
+            <li><%= message %></li>
+          <% end %>
+        </ul>
+      </div>
+    </div>
+  </div>
+<% end %>
+
+<!-- Basic Information -->
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+  <h2 class="text-lg font-semibold text-gray-900 mb-4">Basic Information</h2>
+  
+  <div class="space-y-4">
+    <div>
+      <%= f.label :name, "Business Name", class: "block text-sm font-medium text-gray-700 mb-2" %>
+      <%= f.text_field :name, class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent", placeholder: "e.g., Glamour Beauty Salon" %>
+    </div>
+
+    <div class="flex items-center">
+      <%= f.check_box :active, class: "h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded" %>
+      <%= f.label :active, "Active (Business is currently operating)", class: "ml-2 text-sm text-gray-700" %>
+    </div>
+  </div>
+</div>
+
+<!-- Locations -->
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+  <div class="flex items-center justify-between mb-4">
+    <h2 class="text-lg font-semibold text-gray-900">Locations</h2>
+  </div>
+
+  <div id="locations" class="space-y-4">
+    <%= f.fields_for :locations do |location_form| %>
+      <div class="border border-gray-200 rounded-lg p-4 location-fields">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="md:col-span-2">
+            <%= location_form.label :location_type, "Location Type", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= location_form.select :location_type, 
+                  options_for_select([["Primary", "primary"], ["Branch", "branch"]], location_form.object.location_type), 
+                  { include_blank: "Select type" }, 
+                  class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" %>
+          </div>
+
+          <div class="md:col-span-2">
+            <%= location_form.label :street, "Street Address", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= location_form.text_field :street, class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500", placeholder: "123 Main Street" %>
+          </div>
+
+          <div class="md:col-span-2">
+            <%= location_form.label :street2, "Apartment, suite, etc. (optional)", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= location_form.text_field :street2, class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500", placeholder: "Suite 100" %>
+          </div>
+
+          <div>
+            <%= location_form.label :city, "City", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= location_form.text_field :city, class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500", placeholder: "Los Angeles" %>
+          </div>
+
+          <div>
+            <%= location_form.label :state, "State/Province", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= location_form.text_field :state, class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500", placeholder: "CA" %>
+          </div>
+
+          <div>
+            <%= location_form.label :postal_code, "Postal Code", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= location_form.text_field :postal_code, class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500", placeholder: "90001" %>
+          </div>
+
+          <div>
+            <%= location_form.label :country, "Country", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= location_form.text_field :country, class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500", placeholder: "United States" %>
+          </div>
+        </div>
+
+        <% if location_form.object.persisted? %>
+          <div class="mt-4 flex items-center">
+            <%= location_form.check_box :_destroy, class: "h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded" %>
+            <%= location_form.label :_destroy, "Remove this location", class: "ml-2 text-sm text-red-600" %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <button type="button" class="mt-4 px-4 py-2 text-sm text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors" onclick="addLocation(event)">
+    + Add Another Location
+  </button>
+</div>
+
+<!-- Phone Numbers -->
+<div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
+  <div class="flex items-center justify-between mb-4">
+    <h2 class="text-lg font-semibold text-gray-900">Phone Numbers</h2>
+  </div>
+
+  <div id="phones" class="space-y-4">
+    <%= f.fields_for :phones do |phone_form| %>
+      <div class="border border-gray-200 rounded-lg p-4 phone-fields">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <%= phone_form.label :phone_type, "Type", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= phone_form.select :phone_type, 
+                  options_for_select([["Main", "main"], ["Mobile", "mobile"], ["Fax", "fax"], ["Other", "other"]], phone_form.object.phone_type), 
+                  { include_blank: "Select type" }, 
+                  class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" %>
+          </div>
+
+          <div>
+            <%= phone_form.label :number, "Phone Number", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= phone_form.text_field :number, class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500", placeholder: "(555) 123-4567" %>
+          </div>
+
+          <div>
+            <%= phone_form.label :extension, "Extension (optional)", class: "block text-sm font-medium text-gray-700 mb-2" %>
+            <%= phone_form.text_field :extension, class: "w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500", placeholder: "123" %>
+          </div>
+        </div>
+
+        <% if phone_form.object.persisted? %>
+          <div class="mt-4 flex items-center">
+            <%= phone_form.check_box :_destroy, class: "h-4 w-4 text-red-600 focus:ring-red-500 border-gray-300 rounded" %>
+            <%= phone_form.label :_destroy, "Remove this phone", class: "ml-2 text-sm text-red-600" %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <button type="button" class="mt-4 px-4 py-2 text-sm text-blue-600 hover:text-blue-700 hover:bg-blue-50 rounded-lg transition-colors" onclick="addPhone(event)">
+    + Add Another Phone
+  </button>
+</div>
+
+<script>
+  function addLocation(event) {
+    event.preventDefault();
+    const container = document.getElementById('locations');
+    const timestamp = new Date().getTime();
+    const template = `
+      <div class="border border-gray-200 rounded-lg p-4 location-fields">
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div class="md:col-span-2">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Location Type</label>
+            <select name="business[locations_attributes][${timestamp}][location_type]" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+              <option value="">Select type</option>
+              <option value="primary">Primary</option>
+              <option value="branch">Branch</option>
+            </select>
+          </div>
+          <div class="md:col-span-2">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Street Address</label>
+            <input type="text" name="business[locations_attributes][${timestamp}][street]" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="123 Main Street">
+          </div>
+          <div class="md:col-span-2">
+            <label class="block text-sm font-medium text-gray-700 mb-2">Apartment, suite, etc. (optional)</label>
+            <input type="text" name="business[locations_attributes][${timestamp}][street2]" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Suite 100">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">City</label>
+            <input type="text" name="business[locations_attributes][${timestamp}][city]" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="Los Angeles">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">State/Province</label>
+            <input type="text" name="business[locations_attributes][${timestamp}][state]" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="CA">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Postal Code</label>
+            <input type="text" name="business[locations_attributes][${timestamp}][postal_code]" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="90001">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Country</label>
+            <input type="text" name="business[locations_attributes][${timestamp}][country]" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="United States">
+          </div>
+        </div>
+        <button type="button" class="mt-4 text-sm text-red-600 hover:text-red-700" onclick="this.closest('.location-fields').remove()">Remove</button>
+      </div>
+    `;
+    container.insertAdjacentHTML('beforeend', template);
+  }
+
+  function addPhone(event) {
+    event.preventDefault();
+    const container = document.getElementById('phones');
+    const timestamp = new Date().getTime();
+    const template = `
+      <div class="border border-gray-200 rounded-lg p-4 phone-fields">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Type</label>
+            <select name="business[phones_attributes][${timestamp}][phone_type]" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500">
+              <option value="">Select type</option>
+              <option value="main">Main</option>
+              <option value="mobile">Mobile</option>
+              <option value="fax">Fax</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+            <input type="text" name="business[phones_attributes][${timestamp}][number]" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="(555) 123-4567">
+          </div>
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">Extension (optional)</label>
+            <input type="text" name="business[phones_attributes][${timestamp}][extension]" class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500" placeholder="123">
+          </div>
+        </div>
+        <button type="button" class="mt-4 text-sm text-red-600 hover:text-red-700" onclick="this.closest('.phone-fields').remove()">Remove</button>
+      </div>
+    `;
+    container.insertAdjacentHTML('beforeend', template);
+  }
+</script>
