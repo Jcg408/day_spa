@@ -7,7 +7,11 @@ class Employee < ApplicationRecord
   
   accepts_nested_attributes_for :phones, :locations
 
-  has_secure_password
+  # Make password optional: disable the default has_secure_password validations
+  # and validate length only when a password is provided.
+  has_secure_password validations: false
+
+  validates :password, length: { minimum: 8 }, allow_nil: true
   
   validates :name, presence: true
   validates :email, presence: true, uniqueness: true, format: { with: URI::MailTo::EMAIL_REGEXP }

@@ -1,5 +1,15 @@
 <div>
   <h1 class="font-bold text-3xl">Add Employee </h1>
+  <% if @employee.errors.any? %>
+    <div class="mt-4 bg-red-50 border border-red-200 rounded p-4">
+      <h3 class="text-red-800 font-semibold">There were problems saving the employee:</h3>
+      <ul class="mt-2 list-disc list-inside text-red-700">
+        <% @employee.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
   <div class="mt-10 text-2xl">
   <%= form_with model: @employee do |form| %>
   <div>

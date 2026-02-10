@@ -95,8 +95,11 @@
 
       <div class="text-center py-4">
         <p class="text-4xl font-bold text-gray-900"><%= @business.employees.count %></p>
-        <p class="text-gray-600">Total Employees</p>
-        <%= link_to "Manage Staff", employees_path, class: "mt-4 inline-block text-blue-600 hover:text-blue-700" %>
+          <p class="text-gray-600">Total Employees</p>
+          <div class="mt-4 flex items-center justify-center gap-3">
+            <%= link_to "Manage Staff", employees_path, class: "inline-block text-blue-600 hover:text-blue-700" %>
+            <%= link_to "Add Employee", new_employee_path, class: "inline-flex items-center px-3 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700" %>
+          </div>
       </div>
     </div>
 

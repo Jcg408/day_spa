@@ -1,7 +1,7 @@
 <div>
-  <h1 class="font-bold text-4xl">Employees</h1>
+  <h2 class="font-bold text-2xl">Employees</h1>
   <p><% @employees.each do |emp| %>
-      <%=emp.name%>
+      <ul><%=emp.name%></ul>
     <%end%>
   </p>
 </div>

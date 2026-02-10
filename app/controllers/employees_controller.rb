@@ -1,4 +1,5 @@
 class EmployeesController < ApplicationController
+  before_action :require_authentication
   before_action :require_resource_management, only: [:new, :create]
   before_action :set_employee, only: [:show, :edit, :update, :destroy]
   before_action :authorize_employee_action, only: [:edit, :update]
@@ -68,7 +69,9 @@ class EmployeesController < ApplicationController
       locations_attributes: [:id, :street, :street2, :city, :state, :postal_code, :country, :location_type, :_destroy]
     ]
     
-    base_attributes << :role if current_employee.admin?
+    if current_employee && (current_employee.organization_owner? || current_employee.business_admin_at?(current_business))
+      base_attributes << :role
+    end
     
     params.require(:employee).permit(base_attributes)
   end

@@ -130,7 +130,6 @@
   <div class="bg-white rounded-lg shadow-sm border border-gray-200 p-6">
     <div class="flex items-center justify-between mb-6">
       <h2 class="text-xl font-semibold text-gray-900">Employees</h2>
-      <%= link_to "Add Employee", new_employee_path, class: "px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700" %>
     </div>
 
     <% if @organization.employees.any? %>
@@ -181,7 +180,6 @@
         <h3 class="mt-2 text-sm font-medium text-gray-900">No employees</h3>
         <p class="mt-1 text-sm text-gray-500">Get started by adding employees to your organization.</p>
         <div class="mt-6">
-          <%= link_to "Add Employee", new_employee_path, class: "inline-flex items-center px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700" %>
         </div>
       </div>
     <% end %>
