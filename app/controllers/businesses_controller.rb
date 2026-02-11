@@ -25,15 +25,18 @@ class BusinessesController < ApplicationController
   end
 
   def show
-    @business = current_business
+    @business = current_employee.organization.businesses.find(params[:id])
+    set_current_business_session(@business)
   end
 
   def edit
-    @business = current_business
+    @business = current_employee.organization.businesses.find(params[:id])
+    set_current_business_session(@business)
   end
 
   def update
-    @business = current_business
+    @business = current_employee.organization.businesses.find(params[:id])
+    set_current_business_session(@business)
     if @business.update(business_params)
       redirect_to business_path(@business), notice: "Business settings updated successfully."
     else
@@ -43,6 +46,7 @@ class BusinessesController < ApplicationController
 
   def destroy
     @business = current_employee.organization.businesses.find(params[:id])
+    set_current_business_session(@business)
     @business.destroy
     redirect_to businesses_path, notice: "Business deleted successfully."
   end
